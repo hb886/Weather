@@ -20,7 +20,6 @@ export const WeatherIcons = {
   "11d": "/react-weather-app/icons/storm.svg",
   "11n": "/react-weather-app/icons/storm.svg",
   "50d": "/react-weather-app/icons/cloudy.svg",
-
 };
 
 const Container = styled.div`
@@ -43,17 +42,27 @@ const AppLabel = styled.span`
   font-weight: bold;
 `;
 
-
 function App() {
   const [city, updateCity] = useState();
   const [weather, updateWeather] = useState();
 
   const fetchWeather = async (e) => {
-    e.preventDefault();
-    const response = await Axios.get(
-      `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=fe4feefa8543e06d4f3c66d92c61b69c`,
-    );
-    updateWeather(response.data);
+    if (!city) {
+      alert("Please Enter City Name");
+    } else {
+      e.preventDefault();
+      await Axios.get(
+        `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=fe4feefa8543e06d4f3c66d92c61b69c`
+      )
+        .then((response) => updateWeather(response.data))
+        .catch((error) => {
+          if (error.response?.status === 404) {
+            alert("Unable to find the city");
+            return undefined;
+          }
+          alert(error);
+        });    
+    }
   };
   return (
     <Container>
